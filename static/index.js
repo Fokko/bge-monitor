@@ -6,7 +6,7 @@ function drawHistogram() {
         })
         console.log(data)
         var chart = d3_timeseries()
-                      .addSerie(data,{x:'date',y:'avg',diff:'max'},{interpolate:'monotone',color:"#333"})
+              .addSerie(data,{x:'date',y:'avg',ci_up:'max',ci_down:'min'},{interpolate:'monotone',color:"#333"})
 
         chart('#chart')
     });

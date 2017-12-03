@@ -16,8 +16,8 @@ def get_conn():
         try:
             return psycopg2.connect(conn_string)
         except psycopg2.OperationalError:
+            time.sleep(1)
             if retries <= 0:
-                time.sleep(1)
                 raise
 
 
@@ -43,8 +43,8 @@ def get_histogram():
             EXTRACT(hour from created) AS hour,
             EXTRACT(minute from created) AS minute,
             MIN(temperature) min,
-            MIN(temperature) max,
-            MIN(temperature) avg
+            AVG(temperature) avg,
+            MAX(temperature) max
         FROM temperature 
         GROUP BY year, month, day, hour, minute 
         ORDER BY year, month, day, hour, minute ASC""")
