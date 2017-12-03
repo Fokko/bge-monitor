@@ -1,7 +1,6 @@
 import os
 import psycopg2
 import time
-from datetime import datetime
 from flask import Flask, request, send_from_directory, Response
 
 app = Flask(__name__)
@@ -49,7 +48,6 @@ def get_histogram():
         GROUP BY year, month, day, hour, minute 
         ORDER BY year, month, day, hour, minute ASC""")
         for row in cur:
-            print(row)
             result.append("""{{"date": "{}-{:02d}-{:02d}T{:02d}:{:02d}", "min":{}, "avg":{}, "max":{}}}""".format(
                 int(row[0]),
                 int(row[1]),
@@ -75,12 +73,13 @@ def download_file(filename):
 @app.route('/temp')
 def post_temperature():
     temp = request.args.get('temp')
+    date = request.args.get('date')
     with conn.cursor() as cur:
-        print(temp)
         cur.execute("""
         INSERT INTO temperature(created, temperature) 
-        VALUES('{}', {:f});
-        """.format(datetime.now(), float(temp)))
+        VALUES(%s, %s);
+        """, (date, float(temp)))
+        conn.commit()
     return "OK"
 
 
