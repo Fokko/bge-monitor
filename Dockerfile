@@ -1,13 +1,19 @@
 FROM ubuntu:latest
 
-RUN apt-get update -y && apt-get install -y python-pip python-dev build-essential
+ADD . /app/
 
-COPY . /app
+WORKDIR /app/
 
-WORKDIR /app
+RUN apt-get update \
+ && apt-get install -y python-pip python-dev nginx supervisor build-essential \
+ && pip install --upgrade pip \
+ && pip install uwsgi \
+ && apt-get clean
 
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["python"]
+ADD nginx/default.conf /etc/nginx/conf.d/default.conf
+ADD nginx/nginx.conf /etc/nginx/nginx.conf
+#ADD nginx/htpasswd /etc/nginx/conf/htpasswd
 
-CMD ["app.py"]
+CMD ["/usr/bin/supervisord", "-c", "/app/supervisord/supervisord.conf"]

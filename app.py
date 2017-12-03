@@ -3,9 +3,9 @@ import psycopg2
 import time
 from flask import Flask, request, send_from_directory, Response
 
-app = Flask(__name__)
+application = Flask(__name__)
 
-conn_string = "host='localhost' dbname='bge' user='bge' password='ribszijngoed'"
+conn_string = "host='postgres' dbname='bge' user='bge' password='ribszijngoed'"
 
 
 def get_conn():
@@ -24,13 +24,13 @@ conn = get_conn()
 root_dir = os.getcwd()
 
 
-@app.route('/')
+@application.route('/')
 def index():
     path = os.path.join(root_dir, 'static')
     return send_from_directory(path, 'index.html')
 
 
-@app.route('/hist')
+@application.route('/hist')
 def get_histogram():
     result = []
     with conn.cursor() as cur:
@@ -64,13 +64,13 @@ def get_histogram():
                     mimetype="application/javascript")
 
 
-@app.route('/static/<path:filename>')
+@application.route('/static/<path:filename>')
 def download_file(filename):
     path = os.path.join(root_dir, 'static')
     return send_from_directory(path, filename)
 
 
-@app.route('/temp')
+@application.route('/temp')
 def post_temperature():
     temp = request.args.get('temp')
     date = request.args.get('date')
@@ -84,4 +84,4 @@ def post_temperature():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    application.run(host='0.0.0.0')
