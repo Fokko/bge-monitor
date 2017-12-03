@@ -13,7 +13,9 @@ def get_conn():
     while True:
         retries -= 1
         try:
-            return psycopg2.connect(conn_string)
+            _conn = psycopg2.connect(conn_string)
+            _conn.autocommit = True
+            return _conn
         except psycopg2.OperationalError:
             time.sleep(1)
             if retries <= 0:
@@ -79,7 +81,6 @@ def post_temperature():
         INSERT INTO temperature(created, temperature) 
         VALUES(%s, %s);
         """, (date, float(temp)))
-        conn.commit()
     return "OK"
 
 
