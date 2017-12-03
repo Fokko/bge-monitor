@@ -1,0 +1,19 @@
+postgres:
+  hostname: postgres
+  restart: always
+  image: postgres:latest
+  environment:
+    - POSTGRES_DB=bge
+    - POSTGRES_USER=bge
+    - POSTGRES_PASSWORD=ribszijngoed
+  volumes:
+    - ./sql/:/docker-entrypoint-initdb.d/
+
+flask:
+  build: .
+  links:
+    - postgres:postgres
+  ports:
+    - 5000:5000
+  expose:
+    - 5000
