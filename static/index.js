@@ -23,7 +23,7 @@ function drawHistogram() {
 
         hourInSeconds = 60 * 60 + (Date.now() / 1000)
 
-        expected = data.intercept + (hourInSeconds * data.slope;
+        expected = data.intercept + (hourInSeconds * data.slope);
         difference = expected - currentTemperature
 
         $("#currentTemperature").html(Math.round(currentTemperature) + "&#8451;");
