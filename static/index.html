@@ -13,19 +13,38 @@
 
     <script src="/static/index.js"></script>
     <script src="/static/d3_timeseries.min.js"></script>
+    <style type="text/css">
+    * {
+        color: #17553e;
+    }
+    body {
+        background-color: #17553e;
+    }
+    .container {
+        background-color: whitesmoke;
+        width: 1060px;
+        padding: 10px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .counter, #icons {
+        font-size: 24pt;
+    }
+    </style>
 </head>
 <body>
-<style>
-* {
-    color: #17553e;
-}
-</style>
+<div id="wrapper">
+    <div class="container">
+        <h1>Big Green Egg Monitor</h1>
 
-<div class="container">
-    <h1>Big Green Egg Monitor</h1>
-    <p>This is some text.</p>
-    <div id="chart"></div>
+        Current temperature: <span class="counter" id="currentTemperature"></span><br />
+
+        Trend: <span class="counter" id="currentTrend"></span> <span id="icons"></span> Expected rise in one hour, based on the information of last hour.
+
+        <h2>History</h2>
+        <div id="chart"></div>
+    </div>
 </div>
-
 </body>
 </html>

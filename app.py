@@ -1,3 +1,4 @@
+import datetime
 import os
 import psycopg2
 import time
@@ -35,6 +36,8 @@ def index():
 @application.route('/hist')
 def get_histogram():
     result = []
+    intercept = 0
+    slope = 0
     with conn.cursor() as cur:
         cur.execute("""
         SELECT 
@@ -61,9 +64,27 @@ def get_histogram():
                 row[7]
             ))
 
-    return Response(response="[{}]".format(", ".join(result)),
-                    status=200,
-                    mimetype="application/javascript")
+        cur.execute("""
+            SELECT 
+                regr_intercept(temperature, extract(epoch FROM created)) AS intercept, 
+                regr_slope(temperature, extract(epoch FROM created)) AS slope
+            FROM temperature
+            WHERE created >= NOW() - INTERVAL '1 HOUR'
+            HAVING COUNT(*) > 1
+        """)
+        for row in cur:
+            if row[0]:
+                intercept = float(row[0])
+                slope = float(row[1])
+
+    return Response(response="{{\"hist\":[{}], \"intercept\":{}, \"slope\":{}}}".format(
+        ", ".join(result),
+        intercept,
+        slope
+    ),
+        status=200,
+        mimetype="application/javascript"
+    )
 
 
 @application.route('/static/<path:filename>')
@@ -76,6 +97,10 @@ def download_file(filename):
 def post_temperature():
     temp = request.args.get('temp')
     date = request.args.get('date')
+
+    if not date:
+        date = datetime.datetime.now()
+
     with conn.cursor() as cur:
         cur.execute("""
         INSERT INTO temperature(created, temperature) 

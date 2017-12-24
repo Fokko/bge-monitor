@@ -1,5 +1,5 @@
 CREATE TABLE temperature (
-    created     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created     TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     temperature DECIMAL,
     PRIMARY KEY (created)
 );

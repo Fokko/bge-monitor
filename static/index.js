@@ -1,17 +1,52 @@
-
 function drawHistogram() {
-    $.getJSON( "/hist", function( data ) {
-        data.forEach(function(item, index) {
-            data[index].date = Date.parse(item.date)
+    currentTemperature = 0.0
+    $.getJSON("/hist", function(data) {
+        hist = data.hist
+        // Parse dates
+        hist.forEach(function(item, index) {
+            hist[index].date = Date.parse(item.date)
+            currentTemperature = item.avg
         })
-        console.log(data)
+        // Draw chart
         var chart = d3_timeseries()
-              .addSerie(data,{x:'date',y:'avg',ci_up:'max',ci_down:'min'},{interpolate:'monotone',color:"#333"})
+            .addSerie(hist, {
+                x: 'date',
+                y: 'avg',
+                ci_up: 'max',
+                ci_down: 'min'
+            }, {
+                interpolate: 'monotone',
+                color: "#333"
+            }).width(1000)
 
-        chart('#chart')
+        chart('#chart');
+
+        expected = data.intercept + (Date.now() / 1000) * data.slope;
+        difference = expected - currentTemperature
+
+        $("#currentTemperature").html(Math.round(currentTemperature) + "&#8451;");
+        $("#currentTrend").html(Math.round(difference) + "&#8451;");
+
+        delta = Math.round(difference / 10.0)
+
+        glyph = ''
+        if(delta > 0) {
+          glyph = '&#8670;';
+        }
+        if(delta < 0) {
+          glyph = '&#8671;';
+        }
+
+        console.log(delta)
+
+        html = ''
+        for (var i = 0, len = delta; i < len; i++) {
+          html += glyph;
+        }
+        $("#icons").append(html);
     });
 }
 
-$( document ).ready(function() {
+$(document).ready(function() {
     drawHistogram()
 });
