@@ -21,29 +21,28 @@ function drawHistogram() {
 
         chart('#chart');
 
-        expected = data.intercept + (Date.now() / 1000) * data.slope;
+        hourInSeconds = 60 * 60 + (Date.now() / 1000)
+
+        expected = data.intercept + (hourInSeconds * data.slope;
         difference = expected - currentTemperature
 
         $("#currentTemperature").html(Math.round(currentTemperature) + "&#8451;");
         $("#currentTrend").html(Math.round(difference) + "&#8451;");
 
-        delta = Math.round(difference / 10.0)
-
-        glyph = ''
-        if(delta > 0) {
-          glyph = '&#8670;';
+        glyph = '&#8649'
+        if(difference > 0) {
+          glyph = '&#8607;';
+        }
+        if(difference > 10) {
+          glyph = '&#8648;';
         }
         if(delta < 0) {
-          glyph = '&#8671;';
+          glyph = '&#8609;';
         }
-
-        console.log(delta)
-
-        html = ''
-        for (var i = 0, len = delta; i < len; i++) {
-          html += glyph;
+        if(delta < 10) {
+          glyph = '&#8650;';
         }
-        $("#icons").append(html);
+        $("#icons").append(glyph);
     });
 }
 
